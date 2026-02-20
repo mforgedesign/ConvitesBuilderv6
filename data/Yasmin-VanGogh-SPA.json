@@ -1,18 +1,18 @@
 {
   "basicInfo": {
     "ogTitle": "Convite de 15 Anos - Yasmin Luiza",
-    "ogDescription": "Junte-se a nós para celebrar os 15 anos de Yasmin Luiza em uma noite inspirada no céu estrelado de Van Gogh.",
+    "ogDescription": "Participe da celebração dos 15 anos de Yasmin Luiza no dia 06 de Novembro de 2026.",
     "ogImage": "capa.jpg",
     "pageTitle": "15 Anos Yasmin Luiza",
     "eventDateTime": "2026-11-06T19:30:00"
   },
   "config": {
     "renderMode": "direct",
-    "buttonColor": "#2a4b8d",
+    "buttonColor": "#FFD700",
     "buttonSize": 1,
     "buttonsOffset": "13%",
     "shadowStyle": "background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);",
-    "isButtonFilled": true,
+    "isButtonFilled": false,
     "buttonShape": "pill",
     "timerHideClass": "",
     "watermarkHideClass": "",
@@ -32,7 +32,7 @@
       "id": "confirm",
       "titulo": "Confirmar Presença",
       "icone": "fa-brands fa-whatsapp",
-      "link": "#",
+      "link": "https://wa.me/5517997274686?text=Ol%C3%A1%2C%20confirmo%20minha%20presen%C3%A7a%20no%20anivers%C3%A1rio%20de%2015%20anos%20da%20Yasmin%20Luiza!%0A%0ANome%3A%20%0AQuantidade%20de%20adultos%20(incluindo%20voc%C3%AA)%3A%20",
       "isRSVP": true,
       "whatsappNumber": "5517997274686",
       "isGiftImage": false,
@@ -43,7 +43,12 @@
       "id": "location",
       "titulo": "Local da Festa",
       "icone": "fa-solid fa-location-dot",
-      "link": "https://www.google.com/maps/search/?api=1&query=Buffet+doce+mistura"
+      "link": "https://www.google.com/maps/search/?api=1&query=Buffet+doce+mistua",
+      "isRSVP": false,
+      "whatsappNumber": "",
+      "isGiftImage": false,
+      "isManualImage": false,
+      "manualText": ""
     },
     {
       "id": "gifts",
@@ -51,19 +56,21 @@
       "icone": "fa-solid fa-gift",
       "link": "#",
       "isRSVP": false,
+      "whatsappNumber": "",
       "isGiftImage": false,
       "isManualImage": false,
-      "manualText": "Calça jeans cargo (tam 36)<br>Crocs (tam 39)<br>Cropped preto (tam M)<br>Camiseta de anime<br>Kenner (tam 39)<br>Tênis Vans (tam 39)<br>All Star (tam 39)<br>Brinco de argola pequena (prata)<br>Gloss<br>Perfume Boticário<br><br>Ou se preferir, um mimo via PIX:<br><b>Chave PIX:</b> 18991445497"
+      "manualText": "Calça jeans cargo 36<br>Crocs 39<br>Cropped preto M<br>Camiseta de anime<br>Kenner 39<br>Tênis Vans 39<br>Allstar 39<br>Brinco de argola pequena prata<br>Gloss<br>Perfume Boticário<br><br>...ou se preferir, um mimo via Pix:<br><b>Chave: 18991445497</b>"
     },
     {
       "id": "manual",
-      "titulo": "Dicas da Anfitriã",
-      "icone": "fa-solid fa-book-open",
+      "titulo": "Manual do Convidado",
+      "icone": "fa-solid fa-shirt",
       "link": "#",
       "isRSVP": false,
+      "whatsappNumber": "",
       "isGiftImage": false,
       "isManualImage": false,
-      "manualText": "<b>Chegue no horário:</b> Sua presença pontual é muito importante para nós.<br><br><b>Confirme sua presença:</b> Por favor, confirme com pelo menos 15 dias de antecedência.<br><br><b>Divirta-se bastante!</b> Estamos ansiosos para celebrar este momento especial com você.<br><br>Não vá embora sem me dar um abraço e comer um pedaço do bolo!<br><br><i>Lembrete: convidado não convida.</i>"
+      "manualText": "<b>Chegue no horário:</b><br>Sua presença pontual é muito importante para nós.<br><br><b>Confirme sua presença:</b><br>Por favor, confirme presença pelo menos 15 dias antes do evento.<br><br><b>Divirta-se bastante!</b><br>Estamos ansiosos para celebrar este momento especial com você.<br><br><b>Não vá embora sem me dar um abraço e comer um pedaço do bolo:</b><br>Queremos compartilhar cada instante com você.<br><br>E lembrando: convidado não convida."
     }
   ],
   "toggles": {
