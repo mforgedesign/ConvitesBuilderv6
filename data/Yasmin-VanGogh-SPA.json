@@ -1,0 +1,74 @@
+{
+  "basicInfo": {
+    "ogTitle": "Convite de 15 Anos - Yasmin Luiza",
+    "ogDescription": "Junte-se a nós para celebrar os 15 anos de Yasmin Luiza em uma noite inspirada no céu estrelado de Van Gogh.",
+    "ogImage": "capa.jpg",
+    "pageTitle": "15 Anos Yasmin Luiza",
+    "eventDateTime": "2026-11-06T19:30:00"
+  },
+  "config": {
+    "renderMode": "direct",
+    "buttonColor": "#2a4b8d",
+    "buttonSize": 1,
+    "buttonsOffset": "13%",
+    "shadowStyle": "background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);",
+    "isButtonFilled": true,
+    "buttonShape": "pill",
+    "timerHideClass": "",
+    "watermarkHideClass": "",
+    "companionHideClass": ""
+  },
+  "assets": {
+    "fundoTelaUrl": "capa.jpg",
+    "videoAberturaUrl": "",
+    "musicaUrl": "",
+    "capaUrl": "capa.jpg",
+    "folhaUrl": "",
+    "presentsUrl": "",
+    "manualUrl": ""
+  },
+  "buttons": [
+    {
+      "id": "confirm",
+      "titulo": "Confirmar Presença",
+      "icone": "fa-brands fa-whatsapp",
+      "link": "#",
+      "isRSVP": true,
+      "whatsappNumber": "5517997274686",
+      "isGiftImage": false,
+      "isManualImage": false,
+      "manualText": ""
+    },
+    {
+      "id": "location",
+      "titulo": "Local da Festa",
+      "icone": "fa-solid fa-location-dot",
+      "link": "https://www.google.com/maps/search/?api=1&query=Buffet+doce+mistura"
+    },
+    {
+      "id": "gifts",
+      "titulo": "Sugestão de Presentes",
+      "icone": "fa-solid fa-gift",
+      "link": "#",
+      "isRSVP": false,
+      "isGiftImage": false,
+      "isManualImage": false,
+      "manualText": "Calça jeans cargo (tam 36)<br>Crocs (tam 39)<br>Cropped preto (tam M)<br>Camiseta de anime<br>Kenner (tam 39)<br>Tênis Vans (tam 39)<br>All Star (tam 39)<br>Brinco de argola pequena (prata)<br>Gloss<br>Perfume Boticário<br><br>Ou se preferir, um mimo via PIX:<br><b>Chave PIX:</b> 18991445497"
+    },
+    {
+      "id": "manual",
+      "titulo": "Dicas da Anfitriã",
+      "icone": "fa-solid fa-book-open",
+      "link": "#",
+      "isRSVP": false,
+      "isGiftImage": false,
+      "isManualImage": false,
+      "manualText": "<b>Chegue no horário:</b> Sua presença pontual é muito importante para nós.<br><br><b>Confirme sua presença:</b> Por favor, confirme com pelo menos 15 dias de antecedência.<br><br><b>Divirta-se bastante!</b> Estamos ansiosos para celebrar este momento especial com você.<br><br>Não vá embora sem me dar um abraço e comer um pedaço do bolo!<br><br><i>Lembrete: convidado não convida.</i>"
+    }
+  ],
+  "toggles": {
+    "hideCountdown": false,
+    "hideWatermark": false,
+    "hideCompanionFunctions": false
+  }
+}

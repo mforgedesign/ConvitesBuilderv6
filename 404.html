@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <title id="pageTitle">Carregando...</title>
+
+    <meta property="og:title" id="ogTitle" content="Convite Interativo">
+    <meta property="og:description" id="ogDesc" content="Clique para ver o convite interativo!">
+    <meta property="og:image" id="ogImage" content="">
+    <meta property="og:type" content="website">
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💌</text></svg>">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Montserrat', sans-serif; overflow: hidden; background-color: #000; }
+        .camada { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 0.8s ease-in-out; }
+        .texto-capa { color: white; text-shadow: -1px -1px 0 #555, 1px -1px 0 #555, -1px 1px 0 #555, 1px 1px 0 #555; }
+        @keyframes clicando { 0%, 100% { transform: scale(1); } 50% { transform: scale(0.9); } }
+        .animar-clique { animation: clicando 1.5s infinite ease-in-out; }
+        .invisivel { opacity: 0 !important; pointer-events: none !important; }
+        .visivel { opacity: 1 !important; pointer-events: auto !important; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(255,255,255,0.3); border-radius: 4px; }
+        
+        #loadingOverlay {
+            position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column;
+            justify-content: center; items-center; color: white; transition: opacity 0.5s;
+        }
+        .spinner { border: 4px solid rgba(255, 255, 255, 0.1); border-left-color: #ffffff; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 16px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+    
+    <style id="dynamicStyles"></style>
+</head>
+
+<body class="w-full h-[100dvh] flex justify-center items-center">
+
+    <!-- Loading Screen -->
+    <div id="loadingOverlay">
+        <div class="text-center">
+            <div class="spinner"></div>
+            <p class="font-semibold tracking-widest uppercase text-xs">Preparando Experiência...</p>
+        </div>
+    </div>
+    
+    <!-- Error Screen -->
+    <div id="errorOverlay" class="fixed inset-0 bg-black z-[10000] flex flex-col justify-center items-center text-white invisivel">
+        <i class="fa-solid fa-envelope-open-text text-6xl mb-4 text-stone-500"></i>
+        <h1 class="text-2xl font-bold mb-2">Convite Indisponível</h1>
+        <p class="text-stone-400 text-sm text-center px-6">Verifique se o link está correto ou entre em contato com o anfitrião.</p>
+    </div>
+
+    <div id="mainContainer" class="relative w-full max-w-[480px] h-full bg-black shadow-2xl overflow-hidden transition-all duration-300">
+
+        <!-- Mídias Base -->
+        <video id="fundoTelaVideo" class="camada z-10 invisivel" playsinline loop muted></video>
+        <img id="fundoTelaImg" class="camada z-10 invisivel" />
+        <video id="videoAbertura" class="camada z-20 invisivel" playsinline muted></video>
+        <audio id="musicaFundo" loop preload="auto"></audio>
+
+        <!-- Controles Interativos -->
+        <button id="btnMute" class="absolute top-4 left-4 z-40 text-white bg-black/50 rounded-full w-10 h-10 flex flex-col items-center justify-center invisivel transition-all hover:bg-black/70">
+            <i class="fa-solid fa-volume-high" id="iconMute"></i>
+        </button>
+
+        <button id="btnPular" class="absolute top-4 right-4 z-40 bg-white/20 backdrop-blur-sm border border-white/40 text-white px-4 py-1 rounded-full text-xs font-semibold uppercase tracking-wider invisivel hover:bg-white/30 transition-all shadow-lg">
+            Pular
+        </button>
+
+        <!-- Container Botões (Shadow & Layout) -->
+        <div id="containerShadow" class="absolute bottom-0 left-0 w-full z-30 pb-10 px-2 pt-20 invisivel transition-opacity duration-1000"></div>
+
+        <div id="containerBotoes" class="absolute left-0 w-full z-40 pb-10 px-2 invisivel transition-opacity duration-1000 flex justify-center">
+            <div id="gridBotoes" class="w-full max-w-[480px]"></div>
+        </div>
+
+        <!-- Capa Interaction -->
+        <div id="capaInicial" class="absolute inset-0 z-50 bg-cover bg-center flex flex-col items-center justify-center cursor-pointer transition-opacity duration-700">
+            <div class="absolute inset-0 bg-black/20"></div>
+            <div id="dicaInteractionContainer" class="relative z-10 flex flex-col items-center gap-4 animate-pulse">
+                <i class="fa-solid fa-hand-pointer text-5xl text-white drop-shadow-lg animar-clique"></i>
+                <h1 class="texto-capa text-2xl font-bold uppercase tracking-widest text-center px-4">
+                    Clique para interagir!
+                </h1>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Popups base components -->
+    <div id="popupManual" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm invisivel">
+        <div class="relative w-full max-w-[400px] h-[80%] rounded-xl shadow-2xl overflow-hidden flex flex-col border border-white/20">
+            <div class="absolute inset-0 z-0">
+                <img id="bgManualPopup" class="w-full h-full object-cover opacity-90 blur-[2px]">
+                <div class="absolute inset-0 bg-black/60"></div>
+            </div>
+            <div class="relative z-10 flex justify-between items-center p-4 border-b border-white/10">
+                <h2 id="manualTitle" class="text-xl font-bold text-white"><i class="fa-solid fa-book mr-2 text-stone-300"></i> Manual do Convidado</h2>
+                <button onclick="fecharPopup('popupManual')" class="text-white hover:text-gray-300 transition-colors">
+                    <i class="fa-solid fa-xmark text-2xl"></i>
+                </button>
+            </div>
+            <div class="relative z-10 p-6 overflow-y-auto custom-scrollbar text-white text-center space-y-6">
+                <div id="manualContent" class="text-sm leading-relaxed text-left"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="popupPresentes" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm invisivel">
+        <div class="relative max-w-[90vw] max-h-[90vh] rounded-xl shadow-2xl overflow-hidden">
+            <button onclick="fecharPopup('popupPresentes')" class="absolute top-3 right-3 z-10 bg-black/50 text-white hover:bg-black/70 rounded-full w-10 h-10 flex items-center justify-center transition-colors border border-white/20">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <img id="imagemPresentes" src="" class="max-w-full max-h-[85vh] object-contain rounded-lg">
+        </div>
+    </div>
+    
+    <div id="popupManualImage" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm invisivel">
+        <div class="relative max-w-[90vw] max-h-[90vh] rounded-xl shadow-2xl overflow-hidden">
+            <button onclick="fecharPopup('popupManualImage')" class="absolute top-3 right-3 z-10 bg-black/50 text-white hover:bg-black/70 rounded-full w-10 h-10 flex items-center justify-center transition-colors border border-white/20">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <img id="imagemManualVisual" src="" class="max-w-full max-h-[85vh] object-contain rounded-lg">
+        </div>
+    </div>
+
+    <!-- Popup RSVP -->
+    <div id="popupRSVP" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm invisivel">
+        <div class="relative w-full max-w-[350px] rounded-xl shadow-2xl overflow-hidden border border-white/20 m-4 flex flex-col">
+            <div class="absolute inset-0 z-0">
+                <img id="bgRSVPPopup" class="w-full h-full object-cover opacity-90 blur-[2px]">
+                <div class="absolute inset-0 bg-black/70"></div>
+            </div>
+            <div class="relative z-10 flex justify-between items-center p-4 border-b border-white/10 bg-black/30 backdrop-blur-sm">
+                <h2 class="text-lg font-bold text-white"><i class="fa-brands fa-whatsapp text-green-500 mr-2"></i> Confirmar Presença</h2>
+                <button onclick="fecharPopup('popupRSVP')" class="text-white hover:text-gray-300 transition-colors">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <div class="relative z-10 p-6 space-y-4">
+                <div>
+                    <label class="block text-stone-300 text-xs font-bold mb-1 uppercase">Seu Nome Completo *</label>
+                    <input type="text" id="rsvp-name" class="w-full bg-black/40 border border-stone-500/50 rounded p-2 text-white focus:border-green-500 focus:outline-none placeholder-stone-400 truncate backdrop-blur-sm" placeholder="Ex: Maria Silva">
+                </div>
+                <div>
+                    <label class="block text-stone-300 text-xs font-bold mb-1 uppercase">Seu WhatsApp *</label>
+                    <input type="tel" id="rsvp-phone" class="w-full bg-black/40 border border-stone-500/50 rounded p-2 text-white focus:border-green-500 focus:outline-none placeholder-stone-400 truncate backdrop-blur-sm" placeholder="(DDD) 99999-9999">
+                </div>
+                <div id="container-acompanhantes">
+                    <label class="block text-stone-300 text-xs font-bold mb-1 uppercase">Total de Acompanhantes</label>
+                    <div class="flex items-center gap-3">
+                        <button id="btn-dec-acomp" class="w-10 h-10 bg-stone-700/80 rounded text-white font-bold hover:bg-stone-600 transition-colors backdrop-blur-sm">-</button>
+                        <span id="txt-acomp-count" class="text-white font-bold text-xl w-8 text-center drop-shadow-md">0</span>
+                        <button id="btn-inc-acomp" class="w-10 h-10 bg-stone-700/80 rounded text-white font-bold hover:bg-stone-600 transition-colors backdrop-blur-sm">+</button>
+                    </div>
+                    <p class="text-[10px] text-stone-400 mt-1 drop-shadow">* Apenas acompanhantes autorizados.</p>
+                </div>
+                <div class="flex items-center gap-2 mt-2" id="container-check-acomp">
+                    <input type="checkbox" id="check-no-acomp" class="w-4 h-4 rounded bg-black/40 border-stone-500 text-green-500 focus:ring-green-500 focus:ring-offset-0">
+                    <label for="check-no-acomp" class="text-stone-200 text-xs cursor-pointer select-none drop-shadow">Vou sozinho(a) / Sem acompanhantes</label>
+                </div>
+                <button id="btn-confirm-rsvp" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg transition-colors mt-2 shadow-lg flex items-center justify-center gap-2">
+                    Confirmar no WhatsApp <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- SPA Router & Logic Engine -->
+    <script>
+        let inviteData = null;
+        let inviteId = '';
+        
+        let transicaoFeita = false;
+        let estaMutado = false;
+        let iniciouInteracao = false;
+        let acompCount = 0;
+        let currentRSVPNumber = "";
+
+        // Elements
+        const DOM = {
+            loading: document.getElementById('loadingOverlay'),
+            error: document.getElementById('errorOverlay'),
+            capa: document.getElementById('capaInicial'),
+            videoAbertura: document.getElementById('videoAbertura'),
+            fundoTelaVideo: document.getElementById('fundoTelaVideo'),
+            fundoTelaImg: document.getElementById('fundoTelaImg'),
+            audio: document.getElementById('musicaFundo'),
+            btnPular: document.getElementById('btnPular'),
+            btnMute: document.getElementById('btnMute'),
+            iconMute: document.getElementById('iconMute'),
+            containerBotoes: document.getElementById('containerBotoes'),
+            containerShadow: document.getElementById('containerShadow'),
+            gridBotoes: document.getElementById('gridBotoes'),
+            dynamicStyles: document.getElementById('dynamicStyles')
+        };
+
+        // Resolução inteligente de URLs (Local vs Produção)
+        function resolveUrl(urlObj) {
+            if (!urlObj) return "";
+            if (urlObj.startsWith('http') || urlObj.startsWith('data:')) return urlObj;
+            
+            // Corrige caminhos antigos do builder v6 legados
+            if (urlObj.startsWith('assets/')) {
+                const basename = urlObj.split('/').pop();
+                return `/media/${inviteId}/${basename}`;
+            }
+            
+            // Permite caminhos já formatados corretamente
+            if (urlObj.startsWith('/')) return urlObj;
+            
+            return `/media/${inviteId}/${urlObj}`;
+        }
+
+        async function init() {
+            // Roteamento
+            const path = window.location.pathname.replace(/^\/+|\/+$/g, '');
+            inviteId = path.split('/')[0];
+            
+            if (!inviteId) {
+                // Caso não tenha ID na URL, pode ser um acesso ambiente de teste local ou diretório raiz
+                const searchParams = new URLSearchParams(window.location.search);
+                inviteId = searchParams.get('id') || 'preview'; 
+            }
+
+            try {
+                // Usamos o timestamp para evitar que o navegador cacheie agressivamente (opcional)
+                const cacheBuster = "?v=" + new Date().getTime();
+                const response = await fetch('/data/' + inviteId + '.json' + cacheBuster);
+                
+                if (!response.ok) throw new Error('Data not found');
+                
+                inviteData = await response.json();
+                
+                // Trata retrocompatibilidade
+                if (!inviteData.basicInfo && inviteData.htmlData) {
+                    inviteData = inviteData.htmlData; 
+                }
+                
+                applyDataToDOM();
+            } catch (error) {
+                console.error("Erro ao carregar convite:", error);
+                DOM.loading.classList.add('invisivel');
+                DOM.error.classList.remove('invisivel');
+            }
+        }
+
+        function applyDataToDOM() {
+            if (!inviteData) return;
+
+            // 1. Meta Tags & Titles
+            document.title = inviteData.basicInfo?.pageTitle || "Convite Interativo";
+            document.getElementById('ogTitle').content = inviteData.basicInfo?.ogTitle || "";
+            document.getElementById('ogDesc').content = inviteData.basicInfo?.ogDescription || "";
+            if (inviteData.basicInfo?.ogImage) document.getElementById('ogImage').content = resolveUrl(inviteData.basicInfo.ogImage);
+
+            // 2. Styling Dinâmico (CSS + SHADOW)
+            const btnColor = inviteData.config?.buttonColor || "#1a365d";
+            DOM.dynamicStyles.innerHTML = `
+                :root { --button-color: ${btnColor}; }
+                .custom-button-bg { background-color: var(--button-color) !important; }
+            `;
+            
+            const offset = inviteData.config?.buttonsOffset || "10%";
+            DOM.containerBotoes.style.bottom = offset.includes('%') || offset.includes('px') ? offset : offset + 'px';
+            
+            if (inviteData.config?.shadowStyle) {
+                DOM.containerShadow.style = inviteData.config.shadowStyle;
+            } else {
+                DOM.containerShadow.style.background = "linear-gradient(to top, rgba(0,0,0,0.95), transparent)";
+            }
+
+            // 3. Assets & Mídias
+            DOM.capa.style.backgroundImage = `url('${resolveUrl(inviteData.assets?.capaUrl)}')`;
+            
+            if (inviteData.assets?.musicaUrl) {
+                DOM.audio.src = resolveUrl(inviteData.assets.musicaUrl);
+            }
+
+            // Render Mode Control
+            const rMode = inviteData.config?.renderMode || "standard";
+            
+            if (rMode === "direct") {
+                // Direct mode ignora abertura e renderiza seco.
+                DOM.capa.style.backgroundImage = "none";
+                DOM.capa.style.backgroundColor = "transparent";
+                DOM.capa.querySelector('.bg-black\\/20').style.display = 'none';
+                
+                const icon = document.querySelector('#dicaInteractionContainer i');
+                const text = document.querySelector('#dicaInteractionContainer h1');
+                if (icon) icon.className = "fa-solid fa-music text-5xl text-white drop-shadow-lg animar-clique";
+                if (text) text.innerText = "Clique para tocar a música!";
+            }
+
+            // Abertura
+            if (inviteData.assets?.videoAberturaUrl && rMode !== "direct") {
+                DOM.videoAbertura.src = resolveUrl(inviteData.assets.videoAberturaUrl);
+                DOM.videoAbertura.classList.remove('invisivel');
+            }
+
+            // Background Loop (Video ou Imagem)
+            const fundoUrl = resolveUrl(inviteData.assets?.fundoTelaUrl) || resolveUrl(inviteData.assets?.capaUrl);
+            const isVideoFundo = fundoUrl.match(/\.(mp4|webm)$/i);
+            
+            if (isVideoFundo) {
+                DOM.fundoTelaVideo.src = fundoUrl;
+                if(rMode === "direct") DOM.fundoTelaVideo.classList.remove('invisivel');
+            } else {
+                DOM.fundoTelaImg.src = fundoUrl;
+                if(rMode === "direct") DOM.fundoTelaImg.classList.remove('invisivel');
+            }
+
+            // Popups Background
+            const folhaUrl = resolveUrl(inviteData.assets?.folhaUrl) || resolveUrl(inviteData.assets?.capaUrl);
+            document.getElementById('bgManualPopup').src = folhaUrl;
+            document.getElementById('bgRSVPPopup').src = folhaUrl;
+            
+            // Popups Imagens
+            if (inviteData.assets?.presentsUrl) document.getElementById('imagemPresentes').src = resolveUrl(inviteData.assets.presentsUrl);
+            if (inviteData.assets?.manualUrl) document.getElementById('imagemManualVisual').src = resolveUrl(inviteData.assets.manualUrl);
+
+            // 4. Render Botões
+            renderButtons();
+
+            // 5. Configs Especiais de UI
+            if (inviteData.toggles?.hideCompanionFunctions) {
+                document.getElementById('container-acompanhantes').classList.add('hidden');
+                document.getElementById('container-check-acomp').classList.add('hidden');
+            }
+
+            // 6. Finaliza Carregamento
+            setTimeout(() => {
+                DOM.loading.style.opacity = '0';
+                setTimeout(() => DOM.loading.style.display = 'none', 500);
+            }, 600);
+        }
+
+        function renderButtons() {
+            const botoes = inviteData.buttons || [];
+            if (botoes.length === 0) return;
+
+            const btnCount = botoes.length;
+            let gridClasses = "";
+
+            if (btnCount <= 4) {
+                gridClasses = "flex flex-row flex-nowrap justify-center items-start transition-all duration-300 gap-2";
+            } else {
+                gridClasses = "grid grid-flow-col auto-cols-fr w-full max-w-[480px] place-items-start transition-all duration-300";
+                if (btnCount === 5) gridClasses += " gap-2 scale-95 origin-bottom";
+                else gridClasses += " gap-1 scale-90 origin-bottom";
+            }
+            
+            DOM.gridBotoes.className = gridClasses;
+            DOM.gridBotoes.innerHTML = '';
+
+            const btnSize = inviteData.config?.buttonSize || 1.0;
+            const basePx = 52; 
+            const sizePx = basePx * btnSize;
+            const iconRem = 1.3 * btnSize;
+
+            botoes.forEach(btn => {
+                const anchor = document.createElement('a');
+                anchor.className = "group flex flex-col items-center gap-1 focus:outline-none w-full min-w-0 cursor-pointer";
+                
+                // Lógica de Identificação
+                if (btn.id === 'manual') {
+                    anchor.href = "#";
+                    if (btn.isManualImage || btn.isExternalManualImage) {
+                        anchor.onclick = (e) => { e.preventDefault(); document.getElementById('popupManualImage').classList.remove('invisivel'); };
+                    } else {
+                        anchor.onclick = (e) => { e.preventDefault(); document.getElementById('popupManual').classList.remove('invisivel'); };
+                        if (btn.manualText) document.getElementById('manualContent').innerHTML = btn.manualText;
+                    }
+                } else if (btn.isGiftImage || btn.id === 'gifts') {
+                    anchor.href = "#";
+                    anchor.onclick = (e) => { e.preventDefault(); document.getElementById('popupPresentes').classList.remove('invisivel'); };
+                } else if (btn.isRSVP || btn.id === 'confirm') {
+                    anchor.href = "#";
+                    anchor.onclick = (e) => abrirRSVP(e, btn.link || btn.whatsappNumber);
+                } else {
+                    anchor.href = btn.link || "#";
+                    anchor.target = "_blank";
+                }
+
+                anchor.innerHTML = `
+                    <div class="rounded-full border border-stone-300 p-[2px] transition-transform duration-300 group-hover:scale-105 group-active:scale-95">
+                        <div class="rounded-full custom-button-bg text-white flex items-center justify-center shadow-lg group-hover:bg-opacity-80 transition-all"
+                             style="width: ${sizePx}px; height: ${sizePx}px;">
+                            <i class="${btn.icone}" style="font-size: ${iconRem}rem;"></i>
+                        </div>
+                    </div>
+                    <span class="btn-label text-[10px] uppercase font-bold text-white tracking-wide text-center leading-tight drop-shadow-md w-full px-1">
+                        ${btn.titulo}
+                    </span>
+                `;
+                DOM.gridBotoes.appendChild(anchor);
+            });
+        }
+
+        // --- Lógicas Globais de UI ---
+
+        function fecharPopup(id) {
+            document.getElementById(id).classList.add('invisivel');
+        }
+
+        document.querySelectorAll('.fixed.inset-0.bg-black\\/60').forEach(popup => {
+            popup.addEventListener('click', (e) => {
+                if (e.target === popup) fecharPopup(popup.id);
+            });
+        });
+
+        // RSVP Control Options
+        document.getElementById('btn-dec-acomp').onclick = () => { if (acompCount > 0) document.getElementById('txt-acomp-count').innerText = --acompCount; };
+        document.getElementById('btn-inc-acomp').onclick = () => { document.getElementById('txt-acomp-count').innerText = ++acompCount; };
+        
+        document.getElementById('check-no-acomp').onchange = (e) => {
+            const container = document.getElementById('container-acompanhantes');
+            if (e.target.checked) { container.classList.add('hidden'); acompCount = 0; document.getElementById('txt-acomp-count').innerText = 0; }
+            else { container.classList.remove('hidden'); }
+        };
+
+        function abrirRSVP(e, wppOrLink) {
+            e.preventDefault();
+            const isExternalUrl = wppOrLink.startsWith("http") && !wppOrLink.includes("wa.me") && !wppOrLink.includes("whatsapp.com");
+            if (isExternalUrl) { window.open(wppOrLink, '_blank'); return; }
+            
+            // É um numero raw
+            currentRSVPNumber = wppOrLink.replace(/\D/g, '');
+            document.getElementById('rsvp-name').value = "";
+            document.getElementById('rsvp-phone').value = "";
+            acompCount = 0;
+            document.getElementById('txt-acomp-count').innerText = "0";
+            document.getElementById('check-no-acomp').checked = false;
+            
+            if (!inviteData?.toggles?.hideCompanionFunctions) document.getElementById('container-acompanhantes').classList.remove('hidden');
+            
+            document.getElementById('popupRSVP').classList.remove('invisivel');
+        }
+
+        document.getElementById('btn-confirm-rsvp').onclick = () => {
+            const name = document.getElementById('rsvp-name').value.trim();
+            const phone = document.getElementById('rsvp-phone').value.trim();
+            if (!name || !phone) return alert("Por favor, preencha Nome e WhatsApp.");
+            
+            let message = `Olá! Gostaria de confirmar minha presença.\n\n*Nome:* ${name}\n*Telefone:* ${phone}`;
+            if (!inviteData?.toggles?.hideCompanionFunctions) {
+                if (!document.getElementById('check-no-acomp').checked) {
+                    message += (acompCount > 0) ? `\n*Acompanhantes:* ${acompCount}` : `\n*Acompanhantes:* Nenhum`;
+                } else {
+                    message += `\n*Acompanhantes:* Nenhum (Vou sozinho)`;
+                }
+            }
+            window.open(`https://wa.me/${currentRSVPNumber}?text=${encodeURIComponent(message)}`, '_blank');
+            fecharPopup('popupRSVP');
+        };
+
+        // --- Core Playback & Interactions ---
+
+        DOM.capa.onclick = () => {
+            if (iniciouInteracao) return;
+            iniciouInteracao = true;
+            DOM.capa.classList.add('invisivel');
+
+            if (DOM.audio.src && DOM.audio.src !== window.location.href) {
+                DOM.audio.volume = 0.5;
+                DOM.audio.play().catch(e => console.log('Audio Blocked:', e));
+            }
+
+            const rMode = inviteData?.config?.renderMode || "standard";
+            
+            if (DOM.fundoTelaVideo.src && DOM.fundoTelaVideo.src !== window.location.href) {
+                DOM.fundoTelaVideo.play().catch(e => console.log("Bg video play block", e));
+            }
+
+            if (rMode !== "direct" && DOM.videoAbertura.src && DOM.videoAbertura.src !== window.location.href) {
+                DOM.videoAbertura.play().catch(e => console.log('Intro play block:', e));
+                DOM.btnPular.classList.remove('invisivel');
+            } else {
+                // Se não tem vídeo de abertura, ou é "direct", entra o conteúdo imediatamente
+                irParaLoop(); 
+            }
+
+            DOM.btnMute.classList.remove('invisivel');
+        };
+
+        function irParaLoop() {
+            if (transicaoFeita) return;
+            transicaoFeita = true;
+            DOM.btnPular.classList.add('invisivel');
+
+            if (DOM.fundoTelaVideo.src && DOM.fundoTelaVideo.src !== window.location.href) DOM.fundoTelaVideo.classList.remove('invisivel');
+            if (DOM.fundoTelaImg.src && DOM.fundoTelaImg.src !== window.location.href && !DOM.fundoTelaVideo.src) DOM.fundoTelaImg.classList.remove('invisivel');
+            
+            DOM.videoAbertura.classList.add('invisivel');
+            DOM.containerBotoes.classList.remove('invisivel');
+            DOM.containerShadow.classList.remove('invisivel');
+
+            setTimeout(() => DOM.videoAbertura.pause(), 800);
+        }
+
+        DOM.videoAbertura.onended = irParaLoop;
+        DOM.videoAbertura.ontimeupdate = () => {
+            if (DOM.videoAbertura.duration > 0 && DOM.videoAbertura.currentTime >= DOM.videoAbertura.duration - 0.5) {
+                irParaLoop();
+            }
+        };
+        DOM.btnPular.onclick = irParaLoop;
+
+        DOM.btnMute.onclick = () => {
+            estaMutado = !estaMutado;
+            DOM.audio.muted = estaMutado;
+            DOM.videoAbertura.muted = estaMutado;
+            DOM.fundoTelaVideo.muted = estaMutado;
+            DOM.iconMute.className = estaMutado ? "fa-solid fa-volume-xmark" : "fa-solid fa-volume-high";
+            if (estaMutado) DOM.btnMute.classList.add("bg-red-500/50");
+            else DOM.btnMute.classList.remove("bg-red-500/50");
+        };
+
+        // Start SPA routing process
+        window.addEventListener('DOMContentLoaded', init);
+
+    </script>
+</body>
+</html>
