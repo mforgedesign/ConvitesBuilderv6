@@ -1,0 +1,70 @@
+{
+  "basicInfo": {
+    "ogTitle": "Convite de 15 Anos - Vitória",
+    "ogDescription": "Participe da celebração do meu baile de inverno de 15 anos!",
+    "ogImage": "assets/capa.jpg",
+    "pageTitle": "15 Anos Vitória",
+    "eventDateTime": "2026-02-27T19:00:00"
+  },
+  "config": {
+    "renderMode": "direct",
+    "buttonColor": "#A0D2EB",
+    "buttonSize": 1,
+    "buttonsOffset": "13%",
+    "shadowStyle": "background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);",
+    "isButtonFilled": true,
+    "buttonShape": "pill",
+    "timerHideClass": "",
+    "watermarkHideClass": "",
+    "companionHideClass": ""
+  },
+  "assets": {
+    "fundoTelaUrl": "assets/capa.jpg",
+    "videoAberturaUrl": "",
+    "musicaUrl": "",
+    "capaUrl": "assets/capa.jpg",
+    "folhaUrl": "",
+    "presentsUrl": "",
+    "manualUrl": ""
+  },
+  "buttons": [
+    {
+      "id": "confirm",
+      "titulo": "Confirmar Presença",
+      "icone": "fa-brands fa-whatsapp",
+      "link": "557791123888",
+      "isRSVP": true,
+      "whatsappNumber": "557791123888",
+      "isGiftImage": false,
+      "isManualImage": false,
+      "manualText": ""
+    },
+    {
+      "id": "location",
+      "titulo": "Local da Festa",
+      "icone": "fa-solid fa-location-dot",
+      "link": "https://maps.app.goo.gl/9P8yWd3kL48w64mY8",
+      "isRSVP": false,
+      "whatsappNumber": "",
+      "isGiftImage": false,
+      "isManualImage": false,
+      "manualText": ""
+    },
+    {
+      "id": "manual",
+      "titulo": "Manual do Convidado",
+      "icone": "fa-solid fa-shirt",
+      "link": "#",
+      "isRSVP": false,
+      "whatsappNumber": "",
+      "isGiftImage": false,
+      "isManualImage": false,
+      "manualText": "<strong>Traje:</strong> Esporte Fino.<br><br>Para que a aniversariante seja o grande destaque, pedimos que evitem trajes nas cores azul claro e prata.<br><br>Sua pontualidade é muito importante!<br><br>Prepare-se para tirar muitas fotos e celebrar muito!"
+    }
+  ],
+  "toggles": {
+    "hideCountdown": false,
+    "hideWatermark": false,
+    "hideCompanionFunctions": false
+  }
+}

@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <title id="pageTitle">Carregando... (Versão Final Fix)</title>
+
+    <meta id="ogTitle" property="og:title" content="">
+    <meta id="ogDescription" property="og:description" content="">
+    <meta id="ogImage" property="og:image" content="">
+    <meta property="og:type" content="website">
+
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path d='M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z'/></svg>">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        .camada {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .texto-capa {
+            color: white;
+            text-shadow: -1px -1px 0 #555, 1px -1px 0 #555, -1px 1px 0 #555, 1px 1px 0 #555;
+        }
+
+        @keyframes clicando {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(0.9);
+            }
+        }
+
+        .animar-clique {
+            animation: clicando 1.5s infinite ease-in-out;
+        }
+
+        .invisivel {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .visivel {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #popupManual {
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .blur-background {
+            filter: blur(5px) brightness(0.5);
+        }
+
+        .texto-sombra {
+            text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        body.mode-direct #capaInicial {
+            background-image: none !important;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        body.mode-direct #capaInicial .bg-black\/20 {
+            display: none;
+        }
+
+        body.mode-direct #fundoTelaImg,
+        body.mode-direct #fundoTelaVideo,
+        body.mode-direct #containerBotoes,
+        body.mode-direct #containerShadow {
+            opacity: 1 !important;
+            pointer-events: auto !important;
+        }
+
+        body.mode-direct #videoAbertura {
+            display: none !important;
+        }
+
+        body.mode-transparent #capaInicial {
+            background-image: none !important;
+            background-color: transparent !important;
+        }
+
+        body.mode-transparent #capaInicial .bg-black\/20 {
+            display: none;
+        }
+    </style>
+    <style id="dynamic-styles"></style>
+</head>
+
+<body class="w-full h-[100dvh] flex justify-center items-center">
+
+    <div id="mainContainer"
+        class="relative w-full max-w-[480px] h-full bg-black shadow-2xl overflow-hidden transition-all duration-300">
+        <img id="fundoTelaImg" class="camada z-10 invisivel" onerror="this.style.display='none'">
+        <video id="fundoTelaVideo" class="camada z-10 invisivel" playsinline loop muted
+            onerror="this.style.display='none'"></video>
+        <video id="videoAbertura" class="camada z-20" playsinline muted preload="auto"></video>
+        <audio id="musicaFundo" loop preload="auto"></audio>
+
+        <button id="btnMute"
+            class="absolute top-4 left-4 z-40 text-white bg-black/50 rounded-full w-10 h-10 flex items-center justify-center invisivel transition-all hover:bg-black/70">
+            <i class="fa-solid fa-volume-high" id="iconMute"></i>
+        </button>
+        <button id="btnPular"
+            class="absolute top-4 right-4 z-40 bg-white/20 backdrop-blur-sm border border-white/40 text-white px-4 py-1 rounded-full text-xs font-semibold uppercase tracking-wider invisivel hover:bg-white/30 transition-all">Pular</button>
+
+        <div id="countdownContainer"
+            class="absolute top-[34px] left-0 w-full z-40 flex flex-col items-center justify-center invisivel transition-opacity duration-1000 texto-sombra pointer-events-none">
+            <h2 class="text-white text-[10px] sm:text-xs uppercase tracking-[0.2em] mb-2 font-semibold opacity-90">
+                Contagem Regressiva</h2>
+            <div class="flex gap-3 sm:gap-4 text-white">
+                <div class="flex flex-col items-center"><span id="contadorMeses"
+                        class="text-xl sm:text-2xl font-bold leading-none">00</span><span
+                        class="text-[8px] sm:text-[10px] uppercase opacity-80">Meses</span></div>
+                <div class="flex flex-col items-center"><span id="contadorDias"
+                        class="text-xl sm:text-2xl font-bold leading-none">00</span><span
+                        class="text-[8px] sm:text-[10px] uppercase opacity-80">Dias</span></div>
+                <div class="flex flex-col items-center"><span id="contadorHoras"
+                        class="text-xl sm:text-2xl font-bold leading-none">00</span><span
+                        class="text-[8px] sm:text-[10px] uppercase opacity-80">Hs</span></div>
+                <div class="flex flex-col items-center"><span id="contadorMinutos"
+                        class="text-xl sm:text-2xl font-bold leading-none">00</span><span
+                        class="text-[8px] sm:text-[10px] uppercase opacity-80">Min</span></div>
+                <div class="flex flex-col items-center"><span id="contadorSegundos"
+                        class="text-xl sm:text-2xl font-bold leading-none">00</span><span
+                        class="text-[8px] sm:text-[10px] uppercase opacity-80">Seg</span></div>
+            </div>
+        </div>
+
+        <div id="containerShadow"
+            class="absolute bottom-0 left-0 w-full z-30 pb-10 px-2 pt-20 invisivel transition-opacity duration-1000">
+        </div>
+        <div id="containerBotoes"
+            class="absolute left-0 w-full z-40 pb-10 px-2 invisivel transition-opacity duration-1000 flex justify-center">
+            <div id="gridBotoes" class="flex flex-row flex-nowrap justify-evenly gap-1 w-full max-w-[480px]"></div>
+        </div>
+
+        <div id="capaInicial"
+            class="absolute inset-0 z-50 bg-cover bg-center flex flex-col items-center justify-center cursor-pointer transition-opacity duration-700">
+            <div class="absolute inset-0 bg-black/20"></div>
+            <div id="dicaInteractionContainer" class="relative z-10 flex flex-col items-center gap-4 animate-pulse">
+                <i class="fa-solid fa-hand-pointer text-5xl text-white drop-shadow-lg animar-clique"></i>
+                <h1 class="texto-capa text-2xl font-bold uppercase tracking-widest text-center px-4">Clique para
+                    interagir!</h1>
+            </div>
+        </div>
+
+        <div id="watermark"
+            class="absolute inset-0 z-[100] flex items-center justify-center pointer-events-none hidden">
+            <div class="transform -rotate-45 pointer-events-none select-none opacity-80">
+                <h1 class="text-4xl sm:text-6xl font-black uppercase tracking-widest text-center whitespace-nowrap"
+                    style="-webkit-text-stroke: 1px rgba(0,0,0,0.3); color: rgba(255,255,255,0.25);">
+                    Pagamento<br>Pendente</h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popups -->
+    <div id="popupManual"
+        class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm invisivel">
+        <div
+            class="relative w-full max-w-[400px] h-[80%] rounded-xl shadow-2xl overflow-hidden flex flex-col border border-white/20">
+            <div class="absolute inset-0 z-0"><img id="bgFolhaManual"
+                    class="w-full h-full object-cover opacity-90 blur-[2px]">
+                <div class="absolute inset-0 bg-black/60"></div>
+            </div>
+            <div class="relative z-10 flex justify-between items-center p-4 border-b border-white/10">
+                <h2 id="manualTitle" class="text-xl font-bold text-white">Manual</h2>
+                <button id="btnCloseManual" class="text-white hover:text-gray-300 transition-colors"><i
+                        class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+            <div class="relative z-10 p-6 overflow-y-auto custom-scrollbar text-white text-center space-y-6">
+                <div id="manualContent" class="text-sm leading-relaxed text-left"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="popupPresentes"
+        class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm invisivel">
+        <div class="relative max-w-[90vw] max-h-[90vh] rounded-xl shadow-2xl overflow-hidden">
+            <button id="btnClosePresentes"
+                class="absolute top-3 right-3 z-10 bg-black/50 text-white hover:bg-black/70 rounded-full w-10 h-10 flex items-center justify-center transition-colors border border-white/20"><i
+                    class="fa-solid fa-xmark text-xl"></i></button>
+            <img id="imagemPresentes" class="max-w-full max-h-[85vh] object-contain rounded-lg">
+        </div>
+    </div>
+
+    <div id="popupManualImage"
+        class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm invisivel">
+        <div class="relative max-w-[90vw] max-h-[90vh] rounded-xl shadow-2xl overflow-hidden">
+            <button id="btnCloseManualImage"
+                class="absolute top-3 right-3 z-10 bg-black/50 text-white hover:bg-black/70 rounded-full w-10 h-10 flex items-center justify-center transition-colors border border-white/20"><i
+                    class="fa-solid fa-xmark text-xl"></i></button>
+            <img id="imagemManual" class="max-w-full max-h-[85vh] object-contain rounded-lg">
+        </div>
+    </div>
+
+    <div id="popupRSVP"
+        class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm invisivel">
+        <div
+            class="relative w-full max-w-[350px] rounded-xl shadow-2xl overflow-hidden border border-white/20 m-4 flex flex-col">
+            <div class="absolute inset-0 z-0"><img id="bgFolhaRSVP"
+                    class="w-full h-full object-cover opacity-90 blur-[2px]">
+                <div class="absolute inset-0 bg-black/70"></div>
+            </div>
+            <div
+                class="relative z-10 flex justify-between items-center p-4 border-b border-white/10 bg-black/30 backdrop-blur-sm">
+                <h2 class="text-lg font-bold text-white"><i class="fa-brands fa-whatsapp text-green-500 mr-2"></i>
+                    Confirmar Presença</h2>
+                <button id="btnCloseRSVP" class="text-white hover:text-gray-300 transition-colors"><i
+                        class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div class="relative z-10 p-6 space-y-4">
+                <div><label class="block text-stone-300 text-xs font-bold mb-1 uppercase">Seu Nome Completo
+                        *</label><input type="text" id="rsvp-name"
+                        class="w-full bg-black/40 border border-stone-500/50 rounded p-2 text-white focus:border-green-500 focus:outline-none placeholder-stone-400 truncate backdrop-blur-sm"
+                        placeholder="Ex: Maria Silva"></div>
+                <div><label class="block text-stone-300 text-xs font-bold mb-1 uppercase">Seu WhatsApp *</label><input
+                        type="tel" id="rsvp-phone"
+                        class="w-full bg-black/40 border border-stone-500/50 rounded p-2 text-white focus:border-green-500 focus:outline-none placeholder-stone-400 truncate backdrop-blur-sm"
+                        placeholder="(DDD) 99999-9999"></div>
+                <div id="container-acompanhantes"><label
+                        class="block text-stone-300 text-xs font-bold mb-1 uppercase">Total de Acompanhantes</label>
+                    <div class="flex items-center gap-3"><button id="btn-dec-acomp"
+                            class="w-10 h-10 bg-stone-700/80 rounded text-white font-bold hover:bg-stone-600 transition-colors backdrop-blur-sm">-</button><span
+                            id="txt-acomp-count"
+                            class="text-white font-bold text-xl w-8 text-center drop-shadow-md">0</span><button
+                            id="btn-inc-acomp"
+                            class="w-10 h-10 bg-stone-700/80 rounded text-white font-bold hover:bg-stone-600 transition-colors backdrop-blur-sm">+</button>
+                    </div>
+                </div>
+                <div id="container-check-acomp" class="flex items-center gap-2 mt-2"><input type="checkbox"
+                        id="check-no-acomp"
+                        class="w-4 h-4 rounded bg-black/40 border-stone-500 text-green-500 focus:ring-green-500 focus:ring-offset-0"><label
+                        for="check-no-acomp" class="text-stone-200 text-xs cursor-pointer select-none drop-shadow">Vou
+                        sozinho(a) / Sem acompanhantes</label></div>
+                <button id="btn-confirm-rsvp"
+                    class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg transition-colors mt-2 shadow-lg flex items-center justify-center gap-2">Confirmar
+                    no WhatsApp <i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let data = null;
+
+        async function init() {
+            try {
+                // FORCE FRESH FETCH FROM NEW FILE
+                const response = await fetch('./v6_data.json?t=' + new Date().getTime());
+                if (!response.ok) throw new Error('Erro ao carregar v6_data.json');
+                const jsonData = await response.json();
+                data = jsonData.htmlData || jsonData;
+
+                if (!data || !data.config || !data.basicInfo) {
+                    alert("CRITICAL ERROR: v6_data.json schema is invalid. Please check file content.");
+                    console.error("Invalid Schema:", data);
+                    return;
+                }
+
+                renderData();
+                setupEvents();
+            } catch (error) {
+                console.error('Falha na inicialização:', error);
+                alert('Erro ao carregar dados do convite: ' + error.message);
+            }
+        }
+
+        function renderData() {
+            document.title = (data.basicInfo.pageTitle || "Convite") + " (Versão Final Fix)";
+            setMeta('ogTitle', data.basicInfo.ogTitle);
+            setMeta('ogDescription', data.basicInfo.ogDescription);
+            setMeta('ogImage', data.basicInfo.ogImage);
+
+            const filled = (data.config.isButtonFilled !== false);
+            const color = data.config.buttonColor || "#751a1a";
+
+            let css = "";
+            if (filled) {
+                css = `:root { --button-color: ${color}; } .custom-button-bg { background-color: var(--button-color) !important; color: #ffffff !important; } .custom-button-icon { color: #ffffff !important; }`;
+            } else {
+                css = `:root { --button-color: ${color}; } .custom-button-bg { background-color: #ffffff !important; color: var(--button-color) !important; } .custom-button-icon { color: var(--button-color) !important; }`;
+            }
+
+            document.getElementById('dynamic-styles').innerText = css;
+            document.getElementById('containerShadow').style.cssText = data.config.shadowStyle;
+            document.getElementById('containerBotoes').style.bottom = data.config.buttonsOffset;
+
+            const renderMode = data.config.renderMode;
+            if (renderMode === 'direct') document.body.classList.add('mode-direct');
+            else if (renderMode === 'transparent-cover') document.body.classList.add('mode-transparent');
+
+            if (data.assets.capaUrl) document.getElementById('capaInicial').style.backgroundImage = `url('${data.assets.capaUrl}')`;
+
+            const fundoExt = (data.assets.fundoTelaUrl || "").split('.').pop().toLowerCase();
+            const isVideo = ['mp4', 'webm', 'ogg'].includes(fundoExt);
+            if (data.assets.fundoTelaUrl) {
+                if (isVideo) { document.getElementById('fundoTelaVideo').src = data.assets.fundoTelaUrl; }
+                else { document.getElementById('fundoTelaImg').src = data.assets.fundoTelaUrl; }
+            }
+
+            if (data.assets.videoAberturaUrl) document.getElementById('videoAbertura').src = data.assets.videoAberturaUrl;
+            if (data.assets.presentsUrl) document.getElementById('imagemPresentes').src = data.assets.presentsUrl;
+            if (data.assets.manualUrl) document.getElementById('imagemManual').src = data.assets.manualUrl;
+            if (data.assets.folhaUrl) {
+                document.getElementById('bgFolhaManual').src = data.assets.folhaUrl;
+                document.getElementById('bgFolhaRSVP').src = data.assets.folhaUrl;
+            }
+            if (data.assets.musicaUrl) document.getElementById('musicaFundo').src = data.assets.musicaUrl + "?t=" + new Date().getTime();
+
+            if (data.config.timerHideClass || data.toggles.hideCountdown) document.getElementById('countdownContainer').classList.add('hidden');
+            if (data.config.watermarkHideClass || data.toggles.hideWatermark) document.getElementById('watermark').classList.add('hidden');
+            else document.getElementById('watermark').classList.remove('hidden');
+
+            if (data.toggles.hideCompanionFunctions) {
+                document.getElementById('container-acompanhantes').classList.add('hidden');
+                document.getElementById('container-check-acomp').classList.add('hidden');
+            }
+
+            renderButtons(data.buttons, data.config.buttonSize, data.config.buttonShape || 'round');
+            handleAutoFallback();
+        }
+
+        function handleAutoFallback() {
+            const hasCapa = !!data.assets.capaUrl;
+            const hasVideo = !!data.assets.videoAberturaUrl;
+
+            if (!hasCapa) {
+                console.log('[AutoFallback] No Cover detected.');
+                const capaEl = document.getElementById('capaInicial');
+                if (hasVideo) {
+                    console.log('[AutoFallback] Using Video Abertura as Cover.');
+                    capaEl.style.backgroundImage = 'none';
+                    capaEl.style.backgroundColor = 'transparent';
+                    const video = document.getElementById('videoAbertura');
+                    if (video) {
+                        video.classList.remove('invisivel');
+                        video.style.opacity = '1';
+                        video.currentTime = 0;
+                        video.pause();
+                        const text = document.querySelector('#dicaInteractionContainer h1');
+                        if (text) text.innerText = "Toque para iniciar";
+                    }
+                } else {
+                    console.log('[AutoFallback] No Video. Using Direct Mode (Sheet).');
+                    capaEl.style.backgroundImage = 'none';
+                    capaEl.style.backgroundColor = 'rgba(0,0,0,0.4)';
+                    document.body.classList.add('mode-direct');
+                    const icon = document.querySelector('#dicaInteractionContainer i');
+                    const text = document.querySelector('#dicaInteractionContainer h1');
+                    if (icon) icon.className = "fa-solid fa-music text-5xl text-white drop-shadow-lg animar-clique";
+                    if (text) text.innerText = "Toque para ouvir a música";
+                }
+            }
+        }
+
+        function setMeta(id, content) {
+            const el = document.getElementById(id);
+            if (el) el.setAttribute('content', content || "");
+        }
+
+        function renderButtons(buttons, size, shape) {
+            const gridBotoes = document.getElementById('gridBotoes');
+            gridBotoes.innerHTML = '';
+            const isPill = shape === 'pill';
+            const activeButtons = buttons.filter(btn => {
+                const hasLink = btn.link && btn.link.trim() !== "";
+                const hasManualText = btn.id === 'manual' && (btn.manualText || btn.isManualImage);
+                return hasLink || btn.isGiftImage || hasManualText || btn.isRSVP;
+            });
+            const count = activeButtons.length;
+            let gridClasses = "";
+
+            if (isPill) {
+                if (count <= 3) { gridClasses = "flex flex-col items-center justify-end gap-3 w-full max-w-[300px] mx-auto transition-all duration-300"; }
+                else { gridClasses = "grid grid-cols-2 gap-2 w-full max-w-[480px] px-4 place-items-center transition-all duration-300"; }
+            } else {
+                if (count <= 4) { gridClasses = "flex flex-row justify-center items-start transition-all duration-300 gap-2"; }
+                else {
+                    gridClasses = "grid grid-flow-col auto-cols-fr w-full max-w-[480px] place-items-start transition-all duration-300";
+                    if (count === 5) gridClasses += " gap-2 scale-95 origin-bottom";
+                    else gridClasses += " gap-1 scale-90 origin-bottom";
+                }
+            }
+            gridBotoes.className = gridClasses;
+
+            activeButtons.forEach(btn => {
+                const anchor = document.createElement('a');
+                anchor.className = "group flex flex-col items-center gap-1 focus:outline-none w-full min-w-0 cursor-pointer";
+                anchor.target = "_blank";
+                const basePx = 48;
+                const sizePx = basePx * (size || 1.0);
+                const baseIconRem = 1.125;
+                const iconRem = baseIconRem * (size || 1.0);
+
+                if (btn.id === 'manual') {
+                    anchor.href = "#"; anchor.removeAttribute('target');
+                    if (btn.isManualImage) { anchor.onclick = (e) => { e.preventDefault(); document.getElementById('popupManualImage').classList.remove('invisivel'); }; }
+                    else {
+                        anchor.onclick = (e) => {
+                            e.preventDefault();
+                            document.getElementById('manualContent').innerHTML = btn.manualText;
+                            document.getElementById('popupManual').classList.remove('invisivel');
+                        };
+                    }
+                } else if (btn.isGiftImage) {
+                    anchor.href = "#"; anchor.removeAttribute('target');
+                    anchor.onclick = (e) => { e.preventDefault(); document.getElementById('popupPresentes').classList.remove('invisivel'); };
+                } else if (btn.isRSVP) {
+                    anchor.href = "#"; anchor.removeAttribute('target');
+                    anchor.onclick = (e) => { e.preventDefault(); openRSVP(e, btn.whatsappNumber || btn.link); };
+                } else { anchor.href = btn.link; }
+
+                if (isPill) {
+                    anchor.innerHTML = `<div class="custom-button-bg text-white shadow-lg transition-transform duration-300 group-hover:scale-105 group-active:scale-95 flex items-center justify-center gap-2 px-4 py-3 rounded-full w-full" style="min-width: 140px;"><i class="${btn.icone} custom-button-icon text-lg"></i><span class="text-sm font-bold uppercase tracking-wide leading-none custom-button-icon">${btn.titulo}</span></div>`;
+                } else {
+                    anchor.innerHTML = `<div class="rounded-full border border-stone-300 p-[2px] transition-transform duration-300 group-hover:scale-105 group-active:scale-95"><div class="rounded-full custom-button-bg flex items-center justify-center shadow-lg group-hover:bg-stone-700 transition-colors" style="width: ${sizePx}px; height: ${sizePx}px;"><i class="${btn.icone} custom-button-icon" style="font-size: ${iconRem}rem;"></i></div></div><span class="btn-label text-[10px] uppercase font-bold text-white tracking-wide text-center leading-tight drop-shadow-md w-full px-1" style="word-break: normal; overflow-wrap: normal;">${btn.titulo}</span>`;
+                }
+                gridBotoes.appendChild(anchor);
+            });
+
+            (function autoSizeButtonLabels() {
+                const labels = gridBotoes.querySelectorAll('.btn-label');
+                if (!labels.length) return;
+                let fontSize = 10;
+                const minFontSize = 6;
+                function hasOverflow() {
+                    for (const label of labels) {
+                        const words = label.textContent.trim().split(/\s+/);
+                        for (const word of words) {
+                            const temp = document.createElement('span');
+                            temp.style.cssText = 'font-size:' + fontSize + 'px;font-weight:700;letter-spacing:0.025em;text-transform:uppercase;visibility:hidden;position:absolute;white-space:nowrap;';
+                            temp.textContent = word; document.body.appendChild(temp);
+                            const wordWidth = temp.offsetWidth; document.body.removeChild(temp);
+                            const containerWidth = label.closest('a').offsetWidth;
+                            if (wordWidth > containerWidth - 8) return true;
+                        }
+                    }
+                    return false;
+                }
+                while (fontSize > minFontSize && hasOverflow()) { fontSize--; }
+                labels.forEach(label => { label.style.fontSize = fontSize + 'px'; });
+            })();
+        }
+
+        function setupEvents() {
+            const capa = document.getElementById('capaInicial');
+            const audio = document.getElementById('musicaFundo');
+            const video = document.getElementById('videoAbertura');
+            let started = false;
+
+            capa.onclick = () => {
+                if (started) return;
+                started = true;
+                capa.classList.add('invisivel');
+
+                // Audio Init
+                if (audio) {
+                    audio.volume = 0.5;
+                    audio.play().catch(e => console.log("Audio play failed (user interaction required)", e));
+                }
+
+                // Video Init
+                const fundVid = document.getElementById('fundoTelaVideo');
+                if (fundVid) fundVid.play().catch(e => { });
+
+                if (data.config.renderMode === 'direct') {
+                    goToLoop();
+                } else {
+                    if (video) {
+                        video.play().catch(e => console.error("Intro video play failed", e));
+                        video.onended = goToLoop;
+                    }
+                }
+                document.getElementById('btnMute').classList.remove('invisivel');
+                document.getElementById('btnPular').classList.remove('invisivel');
+            };
+
+            // MUTE LOGIC
+            const btnMute = document.getElementById('btnMute');
+            const iconMute = document.getElementById('iconMute');
+            if (btnMute && audio) {
+                btnMute.onclick = (e) => {
+                    e.stopPropagation();
+                    if (audio.paused) {
+                        audio.play();
+                        iconMute.className = 'fa-solid fa-volume-high';
+                    } else {
+                        audio.pause();
+                        iconMute.className = 'fa-solid fa-volume-xmark';
+                    }
+                };
+            }
+
+            document.getElementById('btnPular').onclick = goToLoop;
+
+            // CLOSE POPUPS ON CLICK OUTSIDE
+            document.querySelectorAll('.fixed').forEach(popup => {
+                popup.onclick = (e) => {
+                    if (e.target === popup) {
+                        popup.classList.add('invisivel');
+                    }
+                };
+            });
+        }
+
+        function goToLoop() {
+            document.getElementById('btnPular').classList.add('invisivel');
+            document.getElementById('videoAbertura').classList.add('invisivel');
+            const img = document.getElementById('fundoTelaImg');
+            const vid = document.getElementById('fundoTelaVideo');
+            if (img && img.src) img.classList.remove('invisivel');
+            if (vid && vid.src) vid.classList.remove('invisivel');
+            document.getElementById('containerBotoes').classList.remove('invisivel');
+            document.getElementById('containerShadow').classList.remove('invisivel');
+            if (!data.toggles.hideCountdown) { document.getElementById('countdownContainer').classList.remove('invisivel'); }
+        }
+
+        setInterval(() => {
+            if (!data || !data.basicInfo.eventDateTime) return;
+            const target = new Date(data.basicInfo.eventDateTime);
+            const now = new Date();
+            const diff = target - now;
+            if (diff <= 0) return;
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+            const months = Math.floor(d / 30);
+            document.getElementById('contadorDias').innerText = (d % 30).toString().padStart(2, '0');
+            document.getElementById('contadorHoras').innerText = h.toString().padStart(2, '0');
+            document.getElementById('contadorMinutos').innerText = m.toString().padStart(2, '0');
+            document.getElementById('contadorSegundos').innerText = s.toString().padStart(2, '0');
+            document.getElementById('contadorMeses').innerText = months.toString().padStart(2, '0');
+        }, 1000);
+
+        let currentRSVPNumber = "";
+        let acompCount = 0;
+        document.getElementById('btn-dec-acomp').addEventListener('click', () => { const txt = document.getElementById('txt-acomp-count'); if (acompCount > 0) { acompCount--; txt.textContent = acompCount; } });
+        document.getElementById('btn-inc-acomp').addEventListener('click', () => { const txt = document.getElementById('txt-acomp-count'); acompCount++; txt.textContent = acompCount; });
+        document.getElementById('check-no-acomp').addEventListener('change', (e) => {
+            const container = document.getElementById('container-acompanhantes');
+            if (e.target.checked) { container.classList.add('hidden'); acompCount = 0; } else { container.classList.remove('hidden'); }
+        });
+
+        function openRSVP(e, link) {
+            e.preventDefault();
+            const isWhatsAppLink = link.includes("wa.me") || link.includes("whatsapp.com");
+            const isUrl = link.startsWith("http") && !isWhatsAppLink;
+            if (isUrl) { window.open(link, '_blank'); return; }
+            currentRSVPNumber = link.replace(/\D/g, '');
+            document.getElementById('rsvp-name').value = "";
+            document.getElementById('rsvp-phone').value = "";
+            acompCount = 0;
+            document.getElementById('txt-acomp-count').textContent = "0";
+            document.getElementById('check-no-acomp').checked = false;
+
+            const containerAcomp = document.getElementById('container-acompanhantes');
+            const checkContainer = document.getElementById('check-no-acomp').parentElement;
+            const companionHidden = data.toggles.hideCompanionFunctions || data.config.companionHideClass === '!hidden';
+            if (companionHidden) { containerAcomp.classList.add('hidden'); checkContainer.classList.add('hidden'); }
+            else { containerAcomp.classList.remove('hidden'); checkContainer.classList.remove('hidden'); }
+            document.getElementById('popupRSVP').classList.remove('invisivel');
+        }
+
+        document.querySelectorAll('[id^=btnClose]').forEach(btn => { btn.onclick = function () { this.closest('.fixed').classList.add('invisivel'); } });
+
+        document.getElementById('btn-confirm-rsvp').addEventListener('click', () => {
+            const name = document.getElementById('rsvp-name').value.trim();
+            const phone = document.getElementById('rsvp-phone').value.trim();
+            const checkNoAcomp = document.getElementById('check-no-acomp');
+            const companionHidden = data.toggles.hideCompanionFunctions || data.config.companionHideClass === '!hidden';
+
+            if (!name || !phone) { alert("Por favor, preencha Nome e WhatsApp."); return; }
+            let message = `Olá! Gostaria de confirmar minha presença.\n\n*Nome:* ${name}\n*Telefone:* ${phone}`;
+
+            if (!companionHidden) {
+                if (!checkNoAcomp.checked) {
+                    if (acompCount > 0) { message += `\n*Acompanhantes:* ${acompCount}`; }
+                    else { message += `\n*Acompanhantes:* Nenhum`; }
+                } else { message += `\n*Acompanhantes:* Nenhum (Vou sozinho)`; }
+            }
+            const waUrl = `https://wa.me/${currentRSVPNumber}?text=${encodeURIComponent(message)}`;
+            window.open(waUrl, '_blank');
+            document.getElementById('popupRSVP').classList.add('invisivel');
+        });
+
+        init();
+
+        setInterval(() => {
+            const video = document.getElementById('videoAbertura');
+            if (video && !video.paused && video.readyState < 3 && video.networkState === 2) {
+                console.warn('Video stalled/loading, forcing play intent...');
+                video.load(); video.play();
+            }
+        }, 5000);
+    </script>
+</body>
+
+</html>
