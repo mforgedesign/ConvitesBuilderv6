@@ -1,0 +1,69 @@
+{
+  "basicInfo": {
+    "ogTitle": "Convite de 15 Anos - Yasmin Luiza",
+    "ogDescription": "Participe da celebração dos 15 anos de Yasmin Luiza em uma noite especial inspirada no céu estrelado de Van Gogh.",
+    "ogImage": "capa.jpg",
+    "pageTitle": "15 Anos Yasmin Luiza",
+    "eventDateTime": "2026-11-06T19:30:00"
+  },
+  "config": {
+    "renderMode": "direct",
+    "buttonColor": "#0e2a47",
+    "buttonSize": 1,
+    "buttonsOffset": "13%",
+    "shadowStyle": "background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);",
+    "isButtonFilled": true,
+    "buttonShape": "pill",
+    "timerHideClass": "",
+    "watermarkHideClass": "",
+    "companionHideClass": ""
+  },
+  "assets": {
+    "fundoTelaUrl": "capa.jpg",
+    "videoAberturaUrl": "",
+    "musicaUrl": "",
+    "capaUrl": "capa.jpg",
+    "folhaUrl": "",
+    "presentsUrl": "",
+    "manualUrl": ""
+  },
+  "buttons": [
+    {
+      "id": "confirm",
+      "titulo": "Confirmar Presença",
+      "icone": "fa-brands fa-whatsapp",
+      "link": "5517997274686",
+      "isRSVP": true,
+      "whatsappNumber": "5517997274686"
+    },
+    {
+      "id": "location",
+      "titulo": "Local da Festa",
+      "icone": "fa-solid fa-location-dot",
+      "link": "#"
+    },
+    {
+      "id": "gifts",
+      "titulo": "Lista de Presentes",
+      "icone": "fa-solid fa-gift",
+      "link": "#",
+      "isGiftImage": false,
+      "isManualImage": false,
+      "manualText": "Sua presença é o meu maior presente, mas se quiser me mimar:<br><br>Calça jeans cargo 36<br>Crocs 39<br>Cropped preto M<br>Camiseta de anime<br>Kenner 39<br>Tênis Vans 39<br>Allstar 39<br>Brinco de argola pequena prata<br>Gloss<br>Perfume Boticário<br><br>Ou se preferir, um mimo via Pix:<br><b>18991445497</b>"
+    },
+    {
+      "id": "manual",
+      "titulo": "Manual do Convidado",
+      "icone": "fa-solid fa-book-open",
+      "link": "#",
+      "isGiftImage": false,
+      "isManualImage": false,
+      "manualText": "<b>Chegue no horário:</b> Sua presença pontual é muito importante para nós.<br><br><b>Confirme sua presença:</b> Por favor, confirme presença pelo menos 15 dias antes do evento.<br><br><b>Divirta-se bastante!</b> Estamos ansiosos para celebrar este momento especial com você.<br><br><b>Não vá embora sem me dar um abraço e comer um pedaço do bolo:</b> Queremos compartilhar cada instante com você.<br><br>E lembrando: convidado não convida."
+    }
+  ],
+  "toggles": {
+    "hideCountdown": false,
+    "hideWatermark": false,
+    "hideCompanionFunctions": false
+  }
+}
