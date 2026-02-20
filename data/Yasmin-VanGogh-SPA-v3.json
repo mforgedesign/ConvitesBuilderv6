@@ -1,0 +1,70 @@
+{
+  "basicInfo": {
+    "ogTitle": "Convite de 15 Anos - Yasmin Luiza",
+    "ogDescription": "Participe da celebração dos 15 anos de Yasmin Luiza com um tema inspirado em Van Gogh!",
+    "ogImage": "capa.jpg",
+    "pageTitle": "15 Anos Yasmin Luiza",
+    "eventDateTime": "2026-11-06T19:30:00"
+  },
+  "config": {
+    "renderMode": "standard",
+    "buttonColor": "#264882",
+    "buttonSize": 1,
+    "buttonsOffset": "13%",
+    "shadowStyle": "background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);",
+    "isButtonFilled": true,
+    "buttonShape": "pill",
+    "timerHideClass": "",
+    "watermarkHideClass": "",
+    "companionHideClass": ""
+  },
+  "assets": {
+    "fundoTelaUrl": "capa.jpg",
+    "videoAberturaUrl": "abertura.mp4",
+    "musicaUrl": "",
+    "capaUrl": "capa.jpg",
+    "folhaUrl": "",
+    "presentsUrl": "",
+    "manualUrl": ""
+  },
+  "buttons": [
+    {
+      "id": "confirm",
+      "titulo": "Confirmar Presença",
+      "icone": "fa-brands fa-whatsapp",
+      "link": "https://wa.me/5517997274686",
+      "isRSVP": true,
+      "whatsappNumber": "5517997274686"
+    },
+    {
+      "id": "location",
+      "titulo": "Local da Festa",
+      "icone": "fa-solid fa-location-dot",
+      "link": "https://www.google.com/maps/search/?api=1&query=Buffet+doce+mistua",
+      "isRSVP": false
+    },
+    {
+      "id": "gifts",
+      "titulo": "Lista de Presentes",
+      "icone": "fa-solid fa-gift",
+      "link": "#",
+      "isRSVP": false,
+      "isGiftImage": false,
+      "manualText": "Calça jeans cargo 36<br>Crocs 39<br>Cropped preto M<br>Camiseta de anime<br>Kenner 39<br>Tênis Vans 39<br>Allstar 39<br>Brinco de argola pequena prata<br>Gloss<br>Perfume Boticário<br><br>...ou se preferir, um mimo via<br>Pix: 18991445497"
+    },
+    {
+      "id": "manual",
+      "titulo": "Dicas Especiais",
+      "icone": "fa-solid fa-shirt",
+      "link": "#",
+      "isRSVP": false,
+      "isManualImage": false,
+      "manualText": "<b>Chegue no horário:</b><br>Sua presença pontual é muito importante para nós.<br><br><b>Confirme sua presença:</b><br>Por favor, confirme presença pelo menos 15 dias antes do evento.<br><br><b>Divirta-se bastante!</b><br>Estamos ansiosos para celebrar este momento especial com você.<br><br><b>Um último pedido:</b><br>Não vá embora sem me dar um abraço e comer um pedaço do bolo!<br><br><i>Lembrete: Convidado não convida.</i>"
+    }
+  ],
+  "toggles": {
+    "hideCountdown": false,
+    "hideWatermark": false,
+    "hideCompanionFunctions": false
+  }
+}
